@@ -1,0 +1,12 @@
+server:
+  port: 20110
+  servlet:
+    context-path: /member
+dubbo:
+  application:
+    name: gmall-user-web
+  registry:
+    protocol: zookeeper
+    address: 192.168.0.110:2182,192.168.0.110:2181,192.168.0.110:2183
+  consumer:
+    check: false
