@@ -61,7 +61,7 @@
                 注意：如果在key class或者record class中有root class相同的属性，MBG就不会重新生成这些属性了，包括：
                     1，属性名相同，类型相同，有相同的getter/setter方法；
              -->
-<!--            <property name="rootClass" value="com.cetccity.common.base.domain.BasePo"/>-->
+            <!--            <property name="rootClass" value="com.cetccity.common.base.domain.BasePo"/>-->
         </javaModelGenerator>
 
         <!-- 【mapping.xml】 生成mapxml文件 -->
@@ -77,17 +77,32 @@
         </javaClientGenerator>
 
         <!-- 待生成的表：一张表一个table -->
-        <table schema="gmall" tableName="ums_member" domainObjectName="UmsMember"
+        <table schema="gmall" tableName="pms_base_attr_info" domainObjectName="PmsBaseAttrInfo"
                enableCountByExample="false" selectByExampleQueryId="false"
                enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false">
             <generatedKey column="id" sqlStatement="JDBC"/>
         </table>
-        <table schema="shop" tableName="ums_member_level" domainObjectName="UmsMemberLevel"
+        <table schema="gmall" tableName="pms_base_attr_value" domainObjectName="PmsBaseAttrValue"
                enableCountByExample="false" selectByExampleQueryId="false"
                enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false">
             <generatedKey column="id" sqlStatement="JDBC"/>
         </table>
-        <table schema="shop" tableName="ums_member_receive_address" domainObjectName="UmsMemberReceiveAddress"
+        <table schema="gmall" tableName="pms_base_catalog1" domainObjectName="PmsBaseCatalog1"
+               enableCountByExample="false" selectByExampleQueryId="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
+        <table schema="gmall" tableName="pms_base_catalog2" domainObjectName="PmsBaseCatalog2"
+               enableCountByExample="false" selectByExampleQueryId="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
+        <table schema="gmall" tableName="pms_base_catalog3" domainObjectName="PmsBaseCatalog3"
+               enableCountByExample="false" selectByExampleQueryId="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
+        <table schema="gmall" tableName="pms_base_sale_attr" domainObjectName="PmsBaseSaleAttr"
                enableCountByExample="false" selectByExampleQueryId="false"
                enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false">
             <generatedKey column="id" sqlStatement="JDBC"/>
