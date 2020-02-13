@@ -77,31 +77,6 @@
         </javaClientGenerator>
 
         <!-- 待生成的表：一张表一个table -->
-        <table schema="gmall" tableName="pms_base_attr_info" domainObjectName="PmsBaseAttrInfo"
-               enableCountByExample="false" selectByExampleQueryId="false"
-               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false">
-            <generatedKey column="id" sqlStatement="JDBC"/>
-        </table>
-        <table schema="gmall" tableName="pms_base_attr_value" domainObjectName="PmsBaseAttrValue"
-               enableCountByExample="false" selectByExampleQueryId="false"
-               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false">
-            <generatedKey column="id" sqlStatement="JDBC"/>
-        </table>
-        <table schema="gmall" tableName="pms_base_catalog1" domainObjectName="PmsBaseCatalog1"
-               enableCountByExample="false" selectByExampleQueryId="false"
-               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false">
-            <generatedKey column="id" sqlStatement="JDBC"/>
-        </table>
-        <table schema="gmall" tableName="pms_base_catalog2" domainObjectName="PmsBaseCatalog2"
-               enableCountByExample="false" selectByExampleQueryId="false"
-               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false">
-            <generatedKey column="id" sqlStatement="JDBC"/>
-        </table>
-        <table schema="gmall" tableName="pms_base_catalog3" domainObjectName="PmsBaseCatalog3"
-               enableCountByExample="false" selectByExampleQueryId="false"
-               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false">
-            <generatedKey column="id" sqlStatement="JDBC"/>
-        </table>
         <table schema="gmall" tableName="pms_base_sale_attr" domainObjectName="PmsBaseSaleAttr"
                enableCountByExample="false" selectByExampleQueryId="false"
                enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false">

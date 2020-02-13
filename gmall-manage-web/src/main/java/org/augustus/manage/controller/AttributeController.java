@@ -2,6 +2,7 @@ package org.augustus.manage.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import org.augustus.bean.PmsBaseAttrInfo;
+import org.augustus.bean.PmsBaseAttrValue;
 import org.augustus.service.AttributeService;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,5 +27,11 @@ public class AttributeController {
     @PostMapping("/saveAttrInfo")
     public String saveAttrInfo(@RequestBody PmsBaseAttrInfo attrInfo) {
         return attributeService.saveAttrInfo(attrInfo);
+    }
+
+    @PostMapping("/getAttrValueList")
+    public List<PmsBaseAttrValue> getAttrValueList(@RequestParam("attrId") Long attrId) {
+        System.out.println(attrId);
+        return attributeService.getAttrValueList(attrId);
     }
 }

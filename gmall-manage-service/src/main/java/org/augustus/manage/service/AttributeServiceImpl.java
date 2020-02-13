@@ -45,4 +45,9 @@ public class AttributeServiceImpl implements AttributeService {
             return "fail";
         }
     }
+
+    @Override
+    public List<PmsBaseAttrValue> getAttrValueList(Long attrId) {
+        return attrValueMapper.getAttrValueList(attrId);
+    }
 }
