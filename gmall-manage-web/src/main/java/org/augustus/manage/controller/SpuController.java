@@ -45,7 +45,7 @@ public class SpuController {
 
     @RequestMapping("/fileUpload")
     public String uploadImage(@RequestParam("file") MultipartFile multipartFile) throws IOException, MyException {
-        // TODO: 2020/2/13 保存到fastdfs
+        // 保存到fastdfs
         String filename = multipartFile.getOriginalFilename();
         System.out.println(filename.substring(filename.indexOf(".") + 1));
         String[] strings = storageClient.upload_file(multipartFile.getBytes(), filename.substring(filename.indexOf(".") + 1), null);
