@@ -5,9 +5,13 @@ import org.augustus.bean.PmsBaseSaleAttr;
 import org.augustus.bean.PmsProductImage;
 import org.augustus.bean.PmsProductInfo;
 import org.augustus.service.SpuService;
+import org.csource.common.MyException;
+import org.csource.fastdfs.StorageClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -20,6 +24,9 @@ public class SpuController {
 
     @Reference
     private SpuService spuService;
+
+    @Autowired
+    private StorageClient storageClient;
 
     @RequestMapping("/spuList")
     public List<PmsProductInfo> getProductInfoList(Long catalog3Id) {
@@ -37,9 +44,12 @@ public class SpuController {
     }
 
     @RequestMapping("/fileUpload")
-    public String uploadImage(@RequestParam("file") MultipartFile multipartFile) {
+    public String uploadImage(@RequestParam("file") MultipartFile multipartFile) throws IOException, MyException {
         // TODO: 2020/2/13 保存到fastdfs
-        return "https://m.360buyimg.com/babel/jfs/t5137/20/1794970752/352145/d56e4e94/591417dcN4fe5ef33.jpg";
+        String filename = multipartFile.getOriginalFilename();
+        System.out.println(filename.substring(filename.indexOf(".") + 1));
+        String[] strings = storageClient.upload_file(multipartFile.getBytes(), filename.substring(filename.indexOf(".") + 1), null);
+        return "http://192.168.0.110:8888/" + strings[0] + "/" + strings[1];
     }
 
     @RequestMapping("/saveSpuInfo")
