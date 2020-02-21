@@ -57,7 +57,7 @@ public class SpuServiceImpl implements SpuService {
             // 2.保存图片信息
             List<PmsProductImage> spuImageList = productInfo.getSpuImageList();
             spuImageList.forEach(image -> {
-                image.setId(productInfo.getId());
+                image.setProductId(productInfo.getId());
                 productImageMapper.insertSelective(image);
             });
             // 3.保存商品销售属性
