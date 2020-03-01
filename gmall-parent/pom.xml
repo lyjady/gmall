@@ -19,6 +19,7 @@
         <module>../gmall-user-service</module>
         <module>../gmall-manage-web</module>
         <module>../gmall-manage-service</module>
+        <module>../gmall-item-web</module>
     </modules>
 
     <groupId>org.augustus</groupId>

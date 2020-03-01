@@ -5,3 +5,5 @@
 ## gmall-manage-web.port: 20210
 ## gmall-manage-service.port: 20220
 ## gmall-manage-service.port: 21220
+## ---------------------------------------------------
+## gmall-item-web.port: 20310

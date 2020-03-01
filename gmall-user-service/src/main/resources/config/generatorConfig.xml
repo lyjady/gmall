@@ -77,7 +77,17 @@
         </javaClientGenerator>
 
         <!-- 待生成的表：一张表一个table -->
-        <table schema="gmall" tableName="pms_base_sale_attr" domainObjectName="PmsBaseSaleAttr"
+        <table schema="gmall" tableName="pms_sku_attr_value" domainObjectName="PmsSkuAttrValue"
+               enableCountByExample="false" selectByExampleQueryId="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
+        <table schema="gmall" tableName="pms_sku_image" domainObjectName="PmsSkuImage"
+               enableCountByExample="false" selectByExampleQueryId="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
+        <table schema="gmall" tableName="pms_sku_sale_attr_value" domainObjectName="PmsSkuSaleAttrValue"
                enableCountByExample="false" selectByExampleQueryId="false"
                enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false">
             <generatedKey column="id" sqlStatement="JDBC"/>

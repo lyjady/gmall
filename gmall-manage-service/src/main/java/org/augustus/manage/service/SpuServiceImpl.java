@@ -77,4 +77,9 @@ public class SpuServiceImpl implements SpuService {
             return "fail";
         }
     }
+
+    @Override
+    public List<PmsProductSaleAttr> spuSaleAttrList(String spuId) {
+        return productSaleAttrMapper.getSpuSaleAttrList(Integer.parseInt(spuId));
+    }
 }

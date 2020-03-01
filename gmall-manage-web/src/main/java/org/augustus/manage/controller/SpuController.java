@@ -4,6 +4,7 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import org.augustus.bean.PmsBaseSaleAttr;
 import org.augustus.bean.PmsProductImage;
 import org.augustus.bean.PmsProductInfo;
+import org.augustus.bean.PmsProductSaleAttr;
 import org.augustus.service.SpuService;
 import org.csource.common.MyException;
 import org.csource.fastdfs.StorageClient;
@@ -55,5 +56,10 @@ public class SpuController {
     @RequestMapping("/saveSpuInfo")
     public String saveSpuInfo(@RequestBody PmsProductInfo productInfo) {
         return spuService.saveSpuInfo(productInfo);
+    }
+
+    @RequestMapping("/spuSaleAttrList")
+    public List<PmsProductSaleAttr> spuSaleAttrList(String spuId) {
+        return spuService.spuSaleAttrList(spuId);
     }
 }

@@ -3,6 +3,7 @@ package org.augustus.service;
 import org.augustus.bean.PmsBaseSaleAttr;
 import org.augustus.bean.PmsProductImage;
 import org.augustus.bean.PmsProductInfo;
+import org.augustus.bean.PmsProductSaleAttr;
 
 import java.util.List;
 
@@ -19,4 +20,6 @@ public interface SpuService {
     List<PmsBaseSaleAttr> baseSaleAttrList();
 
     String saveSpuInfo(PmsProductInfo productInfo);
+
+    List<PmsProductSaleAttr> spuSaleAttrList(String spuId);
 }
