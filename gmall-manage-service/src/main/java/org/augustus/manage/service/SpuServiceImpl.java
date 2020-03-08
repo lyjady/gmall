@@ -33,6 +33,9 @@ public class SpuServiceImpl implements SpuService {
     @Autowired
     private PmsProductSaleAttrValueMapper productSaleAttrValueMapper;
 
+    @Autowired
+    private PmsSkuInfoMapper skuInfoMapper;
+
     @Override
     public List<PmsProductInfo> getSpuList(Long catalog3Id) {
         return productInfoMapper.getSpuList(catalog3Id);
@@ -81,5 +84,15 @@ public class SpuServiceImpl implements SpuService {
     @Override
     public List<PmsProductSaleAttr> spuSaleAttrList(String spuId) {
         return productSaleAttrMapper.getSpuSaleAttrList(Integer.parseInt(spuId));
+    }
+
+    @Override
+    public Long getSpuIdBySkuId(long skuId) {
+        return skuInfoMapper.getSpuIdBySkuId(skuId);
+    }
+
+    @Override
+    public List<PmsProductSaleAttr> getSaleAttrListCheck(Long spuId, Long skuId) {
+        return productSaleAttrMapper.getSaleAttrListCheck(spuId, skuId);
     }
 }

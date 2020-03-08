@@ -22,4 +22,8 @@ public interface SpuService {
     String saveSpuInfo(PmsProductInfo productInfo);
 
     List<PmsProductSaleAttr> spuSaleAttrList(String spuId);
+
+    Long getSpuIdBySkuId(long skuId);
+
+    List<PmsProductSaleAttr> getSaleAttrListCheck(Long spuId, Long skuId);
 }

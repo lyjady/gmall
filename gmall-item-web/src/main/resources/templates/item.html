@@ -10,6 +10,7 @@
 		<link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap.css"/>
 	</head>
 	<body>
+		<input id="skuHash" type="hidden" th:value="${skuHash}"/>
 		<div id="max">
 		<header>
 
@@ -214,11 +215,11 @@
 						  
 						<div class="box-attr-3">
 						<br/>
-							<div class="box-attr-2 clear"  th:each="spuSaleAttr:${spuSaleAttrListCheckBySku}">
+							<div class="attr box-attr-2 clear"  th:each="spuSaleAttr:${spuSaleAttrListCheckBySku}">
 								<dl>
 									<dt th:text="${spuSaleAttr.saleAttrName}">选择颜色</dt>
-									<dd  th:class="redborder" th:each="saleAttrValue:${spuSaleAttr.spuSaleAttrValueList}">
-										<div th:value="${saleAttrValue.id}" th:text="${saleAttrValue.saleAttrValueName}">
+									<dd th:each="saleAttrValue:${spuSaleAttr.spuSaleAttrValueList}">
+										<div style="cursor: pointer" th:value="${saleAttrValue.id}" th:text="${saleAttrValue.saleAttrValueName}">
 											  摩卡金
 										</div>
 									</dd>
@@ -1011,37 +1012,38 @@
         }
 
         function switchSkuId() {
-            // 被选中属性
-            var checkDivs = $(".redborder div");
-            var valueIds="";
-            // 拼接成属性值串
-            for (var i = 0; i < checkDivs.length; i++) {
-                var saleAttrValueDiv = checkDivs.eq(i);
-                if(i>0){
-                    valueIds= valueIds+"|";
-                }
-                valueIds=valueIds+saleAttrValueDiv.attr("value");
-            }
-            //页面上的hashjson
-            var valuesSku = $("#valuesSku").attr("value");
-            var valuesSkuJson=JSON.parse(valuesSku);
-
-            // 看看hash有没有
-            var skuId= valuesSkuJson[valueIds];
-            // 当前sku
-            var skuIdSelf=$("#skuId").val();
-
-            // 判断是否跳转
-            if(skuId){
-                if(skuId==skuIdSelf){
-                    $("#cartBtn").attr("class","box-btns-two");
-                }else{
-                    window.location.href="/"+skuId+".html";
-                }
-            }else{
-                $("#cartBtn").attr("class","box-btns-two-off");
-            }
-        }
+			const checkAttr = $('.redborder');
+			if (checkAttr.length < $('.attr').length) {
+				return;
+			}
+			let skuHash = $('#skuHash').val();
+			skuHash = skuHash.split(',');
+			let checkAttrArr = [];
+			let skuId;
+			for (let i = 0; i < checkAttr.length; i++) {
+				const valueId = checkAttr.eq(i).children(":first").attr('value');
+				checkAttrArr.push(valueId);
+			}
+			for (let i = 0; i < skuHash.length; i++) {
+				let isEquals = true;
+				let valueIds = skuHash[i].split(':')[0];
+				for (let j = 0; j < checkAttrArr.length; j++) {
+					if ((valueIds + '').indexOf(checkAttrArr[j]) === -1) {
+						isEquals = false;
+						break;
+					}
+				}
+				if (isEquals) {
+					skuId = skuHash[i].split(':')[1];
+					if (skuId.indexOf('}') !== -1) {
+						skuId = skuId.substring(0, skuId.length - 1);
+					}
+					skuId = skuId.substring(1, skuId.length - 1);
+					window.location.href = 'http://www.item.gmall.com/' + parseInt(skuId) + '.html';
+					break;
+				}
+			}
+		}
 	</script>
 
 </html>

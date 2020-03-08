@@ -1,5 +1,6 @@
 package org.augustus.manage.mapper;
 
+import org.apache.ibatis.annotations.Select;
 import org.augustus.bean.PmsSkuInfo;
 
 public interface PmsSkuInfoMapper {
@@ -50,4 +51,7 @@ public interface PmsSkuInfoMapper {
      * @mbg.generated
      */
     int updateByPrimaryKey(PmsSkuInfo record);
+
+    @Select("select spuId from gmall.pms_sku_info where id = #{skuId}")
+    Long getSpuIdBySkuId(long skuId);
 }

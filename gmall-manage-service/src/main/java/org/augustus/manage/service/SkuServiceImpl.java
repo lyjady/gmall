@@ -1,10 +1,7 @@
 package org.augustus.manage.service;
 
 import com.alibaba.dubbo.config.annotation.Service;
-import org.augustus.bean.PmsSkuAttrValue;
-import org.augustus.bean.PmsSkuImage;
-import org.augustus.bean.PmsSkuInfo;
-import org.augustus.bean.PmsSkuSaleAttrValue;
+import org.augustus.bean.*;
 import org.augustus.manage.mapper.PmsSkuAttrValueMapper;
 import org.augustus.manage.mapper.PmsSkuImageMapper;
 import org.augustus.manage.mapper.PmsSkuInfoMapper;
@@ -14,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author LinYongJin
@@ -67,5 +66,22 @@ public class SkuServiceImpl implements SkuService {
         List<PmsSkuImage> skuImages = skuImageMapper.selectImageBySkuId(Long.parseLong(skuId));
         skuInfo.setSkuImageList(skuImages);
         return skuInfo;
+    }
+
+    @Override
+    public Map<String, String> getSkuAndValueIdMapping(Long spuId) {
+        List<PmsSkuSaleAttrValue> pmsSkuSaleAttrValues = skuSaleAttrValueMapper.getSkuAndValueIdMapping(spuId);
+        Map<String, String> map = new HashMap<>();
+        for (PmsSkuSaleAttrValue pmsSkuSaleAttrValue : pmsSkuSaleAttrValues) {
+            String value = String.valueOf(pmsSkuSaleAttrValue.getId());
+            List<PmsProductSaleAttrValue> pmsProductSaleAttrValues = pmsSkuSaleAttrValue.getPmsProductSaleAttrValues();
+            StringBuffer sb = new StringBuffer();
+            for (PmsProductSaleAttrValue pmsProductSaleAttrValue : pmsProductSaleAttrValues) {
+                sb.append(pmsProductSaleAttrValue.getId()).append("|");
+            }
+            sb.deleteCharAt(sb.length() - 1);
+            map.put(sb.toString(), value);
+        }
+        return map;
     }
 }

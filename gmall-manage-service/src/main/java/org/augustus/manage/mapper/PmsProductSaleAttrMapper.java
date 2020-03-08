@@ -1,5 +1,6 @@
 package org.augustus.manage.mapper;
 
+import org.apache.ibatis.annotations.Param;
 import org.augustus.bean.PmsProductSaleAttr;
 
 import java.util.List;
@@ -54,4 +55,6 @@ public interface PmsProductSaleAttrMapper {
     int updateByPrimaryKey(PmsProductSaleAttr record);
 
     List<PmsProductSaleAttr> getSpuSaleAttrList(Integer spuId);
+
+    List<PmsProductSaleAttr> getSaleAttrListCheck(@Param("spuId") Long spuId, @Param("skuId") Long skuId);
 }

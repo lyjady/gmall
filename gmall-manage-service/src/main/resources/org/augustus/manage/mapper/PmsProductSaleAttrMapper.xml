@@ -128,4 +128,28 @@
         on attr.sale_attr_id = `value`.sale_attr_id and attr.product_id = `value`.product_id
         where attr.product_id = #{spuId,jdbcType=INTEGER};
     </select>
+    <resultMap id="getSpuSaleAttrListCheckResultMap" type="org.augustus.bean.PmsProductSaleAttr">
+        <id property="id" column="attrId"/>
+        <result property="saleAttrName" column="attrName"/>
+        <result property="saleAttrId" column="saleAttrId"/>
+        <collection property="spuSaleAttrValueList" ofType="org.augustus.bean.PmsProductSaleAttrValue">
+            <id property="id" column="valueId"/>
+            <result property="saleAttrValueName" column="valueName"/>
+            <result property="isCheck" jdbcType="BOOLEAN" column="isCheck"/>
+        </collection>
+    </resultMap>
+    <select id="getSaleAttrListCheck" resultMap="getSpuSaleAttrListCheckResultMap">
+        select attr.id                              attrId,
+               attr.sale_attr_name                  attrName,
+               attr.sale_attr_id                    saleAttrId,
+               `value`.id                           valueId,
+               `value`.sale_attr_value_name         valueName,
+               if(saav.sku_id, true, false)         isCheck
+        from gmall.pms_product_sale_attr attr
+                 left join gmall.pms_product_sale_attr_value value
+                           on attr.sale_attr_id = `value`.sale_attr_id and attr.product_id = `value`.product_id
+                 left join gmall.pms_sku_sale_attr_value saav
+                           on attr.sale_attr_id = saav.sale_attr_id and `value`.id = saav.sale_attr_value_id and sku_id = #{skuId,jdbcType=BIGINT}
+        where attr.product_id = #{spuId,jdbcType=BIGINT};
+    </select>
 </mapper>
