@@ -86,6 +86,14 @@ public class SkuServiceImpl implements SkuService {
      * 为了解决并发问题先从缓存中访问, 若缓存中没有则在访问数据库
      * 为了解决分布式锁的问题现先使用Redis来解决后面改成Redisson
      *
+     * 缓存击穿: 一个热点key失效导致全部的请求都怼到数据库(使用分布式锁来限流, 控制访问数据库的请求量)
+     * 缓存穿透: 访问一个缓存中不存在的key, 此时访问数据库, 数据库中也不存在。如果此时用这个key攻击系统会导致数据库压力过大(将这个为null的key也写入Redis并设置一个较短的时间)
+     * 缓存雪崩: 集体key失效或者Redis宕机, 全部的请求都到数据库(为每个key在基本过期时间的基础上再加上一个随机数)
+     *
+     * 使用Redis的setnx在释放锁时遇到的问题: 锁是否是自己的, 如何避免误删
+     * (使用唯一的token作为判断的条件, 但是这样做要发起两次网络请求, 第一次取key然后本地判断, 相同发起第二次删除的请求.这样有可能网络传输发生了延迟, 在第一次传输回Java服务器的过程中锁就失效了.造成误删)
+     * (使用lua脚本进行优化将两次网络传输变成一次, 直接在一次网络请求中在Redis中判断token是否一致, 一致就直接删除)
+     *
      * @param skuId
      * @return
      */
@@ -126,7 +134,7 @@ public class SkuServiceImpl implements SkuService {
                 logger.info(userAgent + "释放锁");
                 String lockToken = stringForSku.get(lockKey);
                 if (StringUtils.isNotBlank(lockToken)) {
-                    // 通过lockToken来判断当前的锁是不是自己上的, 下面写法发起了两次网络请求, 有可能网络传输发生了延迟.在第一次判断完成之后锁就失效了.造成误删
+                    // 通过lockToken来判断当前的锁是不是自己上的, 下面写法发起了两次网络请求, 有可能网络传输发生了延迟.在第一次传输回Java服务器的过程中锁就失效了.造成误删
                     // 使用lua脚本进行优化将两次网络传输变成一次, 直接在一次网络请求中判断token是否一致, 一致就直接删除
                     //if (lockToken.equals(token)) {
                         // 是就释放
