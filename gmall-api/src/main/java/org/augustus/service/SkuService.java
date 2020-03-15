@@ -12,7 +12,7 @@ public interface SkuService {
 
     String saveSkuInfo(PmsSkuInfo skuInfo);
 
-    PmsSkuInfo findSkuInfo(String skuId);
+    PmsSkuInfo findSkuInfo(String skuId, String userAgent);
 
     Map<String, String> getSkuAndValueIdMapping(Long spuId);
 }

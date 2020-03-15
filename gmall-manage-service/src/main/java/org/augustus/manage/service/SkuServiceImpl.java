@@ -1,19 +1,27 @@
 package org.augustus.manage.service;
 
 import com.alibaba.dubbo.config.annotation.Service;
+import org.apache.commons.lang3.StringUtils;
 import org.augustus.bean.*;
 import org.augustus.manage.mapper.PmsSkuAttrValueMapper;
 import org.augustus.manage.mapper.PmsSkuImageMapper;
 import org.augustus.manage.mapper.PmsSkuInfoMapper;
 import org.augustus.manage.mapper.PmsSkuSaleAttrValueMapper;
 import org.augustus.service.SkuService;
+import org.augustus.utils.CommonUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
+import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author LinYongJin
@@ -22,6 +30,8 @@ import java.util.Map;
 @Service
 @Component
 public class SkuServiceImpl implements SkuService {
+
+    private final Logger logger = LoggerFactory.getLogger(SkuServiceImpl.class);
 
     @Autowired
     private PmsSkuInfoMapper skuInfoMapper;
@@ -34,6 +44,18 @@ public class SkuServiceImpl implements SkuService {
 
     @Autowired
     private PmsSkuSaleAttrValueMapper skuSaleAttrValueMapper;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+
+    private final static String REDIS_SKU_PREFIX = "sku:";
+
+    private final static String REDIS_SKU_SUFFIX = ":info";
+
+    private final static String REDIS_LOCK_SUFFIX = ":lock";
 
     @Override
     @Transactional
@@ -60,11 +82,76 @@ public class SkuServiceImpl implements SkuService {
         return "success";
     }
 
+    /**
+     * 为了解决并发问题先从缓存中访问, 若缓存中没有则在访问数据库
+     * 为了解决分布式锁的问题现先使用Redis来解决后面改成Redisson
+     *
+     * @param skuId
+     * @return
+     */
     @Override
-    public PmsSkuInfo findSkuInfo(String skuId) {
-        PmsSkuInfo skuInfo = skuInfoMapper.selectByPrimaryKey(Long.parseLong(skuId));
-        List<PmsSkuImage> skuImages = skuImageMapper.selectImageBySkuId(Long.parseLong(skuId));
-        skuInfo.setSkuImageList(skuImages);
+    public PmsSkuInfo findSkuInfo(String skuId, String userAgent) {
+        // 查看缓存中是否有数据
+        ValueOperations<String, PmsSkuInfo> forSku = redisTemplate.opsForValue();
+        ValueOperations<String, String> stringForSku = stringRedisTemplate.opsForValue();
+        String skuKey = REDIS_SKU_PREFIX + skuId + REDIS_SKU_SUFFIX;
+        PmsSkuInfo skuInfo = forSku.get(skuKey);
+        if (skuInfo == null) {
+            logger.info(userAgent + "缓存中没有访问数据库");
+            // 缓冲中没有从MySQL中获取
+            // 使用Redis的setnx指令来实现分布式锁
+            // 判断是否被上锁
+            String lockKey = REDIS_SKU_PREFIX + skuId + REDIS_LOCK_SUFFIX;
+            // 用token作为锁的value值, 在删除的时候判断token是否一致。一致说明锁是自己上的删除, 不一致则说明锁是别人上的不做任何操作。
+            String token = UUID.randomUUID().toString();
+            if (!stringRedisTemplate.hasKey(lockKey)) {
+                // 没锁并上锁
+                stringForSku.set(lockKey, token, 5, TimeUnit.SECONDS);
+                // 上锁成功
+                logger.info(userAgent + "上锁成功");
+                // 访问MySQL
+                skuInfo = skuInfoMapper.selectByPrimaryKey(Long.parseLong(skuId));
+                if (skuInfo == null) {
+                    // 如果为空将null的数据放入redis并设置较短的过期时间, 防止缓存穿透
+                    stringForSku.set(skuKey, "null", 5, TimeUnit.MINUTES);
+                    return new PmsSkuInfo();
+                }
+                List<PmsSkuImage> skuImages = skuImageMapper.selectImageBySkuId(Long.parseLong(skuId));
+                skuInfo.setSkuImageList(skuImages);
+                // 获取完成后放置到缓存中设置过期时间为1个小时, 为了放置缓存雪崩问题, 在一个小时的基础上加上一个随机的数的过期时间单位为分钟
+                int randomMinute = CommonUtils.generalRandomMinute(60);
+                long ttl = 60 + randomMinute;
+                forSku.set(skuKey, skuInfo, ttl, TimeUnit.MINUTES);
+                // 释放锁
+                logger.info(userAgent + "释放锁");
+                String lockToken = stringForSku.get(lockKey);
+                if (StringUtils.isNotBlank(lockToken)) {
+                    // 通过lockToken来判断当前的锁是不是自己上的, 下面写法发起了两次网络请求, 有可能网络传输发生了延迟.在第一次判断完成之后锁就失效了.造成误删
+                    // 使用lua脚本进行优化将两次网络传输变成一次, 直接在一次网络请求中判断token是否一致, 一致就直接删除
+                    //if (lockToken.equals(token)) {
+                        // 是就释放
+                        //stringRedisTemplate.delete(lockKey);
+                    //}
+                    // lua脚本
+                    String luaScript = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
+                    DefaultRedisScript<Long> redisScript = new DefaultRedisScript<>();
+                    redisScript.setResultType(Long.class);
+                    redisScript.setScriptText(luaScript);
+                    stringRedisTemplate.execute(redisScript, Collections.singletonList(lockKey), token);
+                }
+                return skuInfo;
+            } else {
+                logger.info(userAgent + "存在锁, 上锁失败, 开始等待准备重新获取");
+                // 设置失败存在相应的key
+                try {
+                    TimeUnit.SECONDS.sleep(2);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                return findSkuInfo(skuId, userAgent);
+            }
+        }
+        logger.info(userAgent + "缓存中存在直接访问缓存");
         return skuInfo;
     }
 
