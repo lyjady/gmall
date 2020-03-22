@@ -9,6 +9,7 @@ import org.augustus.manage.mapper.PmsSkuInfoMapper;
 import org.augustus.manage.mapper.PmsSkuSaleAttrValueMapper;
 import org.augustus.service.SkuService;
 import org.augustus.utils.CommonUtils;
+import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,9 @@ public class SkuServiceImpl implements SkuService {
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+
+    @Autowired
+    private RedissonClient redissonClient;
 
     private final static String REDIS_SKU_PREFIX = "sku:";
 

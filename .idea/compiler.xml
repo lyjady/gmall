@@ -6,18 +6,18 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="gmall-web-utils" />
         <module name="gmall-common-utils" />
-        <module name="gmall-user-service" />
+        <module name="gmall-item-web" />
         <module name="gamll-user-service" />
         <module name="gmall-manage-service" />
         <module name="gamll-item-web" />
-        <module name="gmall-api" />
         <module name="gmall-user-web" />
         <module name="gmall-manage-web" />
         <module name="gmall" />
-        <module name="gmall-item-web" />
+        <module name="gmall-api" />
         <module name="gmall-service-utils" />
-        <module name="gmall-web-utils" />
+        <module name="gmall-user-service" />
       </profile>
     </annotationProcessing>
   </component>
