@@ -7,3 +7,8 @@
 ## gmall-manage-service.port: 21220
 ## ---------------------------------------------------
 ## gmall-item-web.port: 20310
+## ---------------------------------------------------
+## gmall-search-web.port: 20410
+## gmall-search-service.port: 20420
+## gmall-search-service-dubbo.port: 21420
+## ---------------------------------------------------
