@@ -43,7 +43,7 @@
         <xml-apis.version>1.4.01</xml-apis.version>
         <batik-ext.version>1.12</batik-ext.version>
         <jsoup.version>1.12.1</jsoup.version>
-        <httpclent.version>4.5.10</httpclent.version>
+        <httpclent.version>4.5.13</httpclent.version>
         <lang.version>3.9</lang.version>
         <beanutils.version>1.9.3</beanutils.version>
         <mysql.connector.java.version>8.0.17</mysql.connector.java.version>
