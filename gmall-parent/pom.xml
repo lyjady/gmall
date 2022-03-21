@@ -35,7 +35,7 @@
         <java.version>12</java.version>
 
         <fastjson.version>1.2.62</fastjson.version>
-        <dubbo.version>2.6.2</dubbo.version>
+        <dubbo.version>2.6.9</dubbo.version>
         <curator.version>2.10.0</curator.version>
         <dubbo.starter.version>0.2.0</dubbo.starter.version>
         <mybatis.version>2.1.1</mybatis.version>
